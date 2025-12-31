@@ -3,21 +3,32 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 function getDB() {
     // MySQL Connection
-    $mysql_url = getenv("JAWSDB_URL") ?: getenv("CLEARDB_DATABASE_URL");
+    // MySQL Connection
+    $mysql_url = getenv("MYSQL_URL") ?: getenv("JAWSDB_URL"); // MYSQL_URL for Render
     if ($mysql_url) {
-        // Heroku (JawsDB/ClearDB)
+        // Remote Database (Render/Heroku)
         $dbparts = parse_url($mysql_url);
         $hostname = $dbparts['host'];
         $username = $dbparts['user'];
         $password = $dbparts['pass'];
         $database = ltrim($dbparts['path'], '/');
-        
-        $pdo = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
+        $port = isset($dbparts['port']) ? $dbparts['port'] : 3306;
+
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ];
+
+        // Aiven/External SSL Support
+        if (file_exists(__DIR__ . '/../aiven_ca.pem')) {
+            $options[PDO::MYSQL_ATTR_SSL_CA] = realpath(__DIR__ . '/../aiven_ca.pem');
+        }
+
+        $pdo = new PDO("mysql:host=$hostname;port=$port;dbname=$database", $username, $password, $options);
     } else {
         // Localhost
         $pdo = new PDO("mysql:host=localhost;dbname=auth_db", "root", "");
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // MongoDB Connection
     $mongo_uri = getenv("MONGODB_URI") ?: "mongodb://localhost:27017";
