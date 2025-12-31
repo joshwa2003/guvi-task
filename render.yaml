@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: guvi-task-app
+    env: php
+    plan: free
+    buildCommand: composer install --no-dev --optimize-autoloader
+    startCommand: heroku-php-apache2 ./
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: guvi-task-redis
+          property: connectionString
+      - key: MYSQL_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+
+  - type: redis
+    name: guvi-task-redis
+    plan: free # Max 25MB, perfect for sessions
+    ipAllowList: [] # Only allow internal connections
