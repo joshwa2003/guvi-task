@@ -16,24 +16,8 @@ if (!$userId) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
-  try {
-     $profile = $profiles->findOne(["user_id" => (int)$userId]);
-     if (!$profile) {
-         // Self-healing: Create missing profile
-         $profile = [
-             "user_id" => (int)$userId,
-             "name" => "",
-             "age" => "",
-             "dob" => "",
-             "contact" => ""
-         ];
-         $profiles->insertOne($profile);
-     }
-     echo json_encode($profile);
-  } catch (Exception $e) {
-      http_response_code(500);
-      echo json_encode(["error" => "Database error"]);
-  }
+  $profile = $profiles->findOne(["user_id" => (int)$userId]);
+  echo json_encode($profile);
   exit;
 }
 $profiles->updateOne(

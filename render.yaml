@@ -16,5 +16,5 @@ services:
 
   - type: redis
     name: guvi-task-redis
-    plan: free # Max 25MB, perfect for sessions
-    ipAllowList: [] # Only allow internal connections
+    plan: free 
+    ipAllowList: [] 
