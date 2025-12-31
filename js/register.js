@@ -15,6 +15,10 @@ function register() {
         success: function (res) {
             alert(res.message);
             window.location.href = "login.html";
+        },
+        error: function (xhr, status, error) {
+            console.error(xhr);
+            alert("Registration failed: " + (xhr.responseJSON ? xhr.responseJSON.message : "Server Error"));
         }
     });
 }

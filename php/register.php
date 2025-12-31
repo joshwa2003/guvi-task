@@ -1,26 +1,46 @@
 <?php
 header("Content-Type: application/json");
 
-require_once "db.php";
-$db = getDB();
-$pdo = $db['pdo'];
-$profiles = $db['mongo']->profiles;
+try {
+    require_once "db.php";
+    $db = getDB();
+    $pdo = $db['pdo'];
+    $profiles = $db['mongo']->profiles;
 
-$email = $_POST["email"];
-$password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $email = $_POST["email"] ?? '';
+    $password = $_POST["password"] ?? '';
 
-$stmt = $pdo->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-$stmt->execute([$email, $password]);
+    if (empty($email) || empty($password)) {
+        throw new Exception("Email and password are required", 400);
+    }
 
-$userId = $pdo->lastInsertId();
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
+    $stmt = $pdo->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
+    $stmt->execute([$email, $hashedPassword]);
 
-$profiles->insertOne([
-  "user_id" => (int)$userId,
-  "name" => "",
-  "age" => "",
-  "dob" => "",
-  "contact" => ""
-]);
+    $userId = $pdo->lastInsertId();
 
-echo json_encode(["message" => "Registration successful"]);
+    $profiles->insertOne([
+      "user_id" => (int)$userId,
+      "name" => "",
+      "age" => "",
+      "dob" => "",
+      "contact" => ""
+    ]);
+
+    echo json_encode(["message" => "Registration successful"]);
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    // Determine if it's a duplicate entry (error 1062)
+    if ($e->getCode() == 23000) {
+        http_response_code(409);
+        echo json_encode(["message" => "Email already exists"]);
+    } else {
+        echo json_encode(["message" => "Database error: " . $e->getMessage()]);
+    }
+} catch (Exception $e) {
+    http_response_code($e->getCode() ?: 500);
+    echo json_encode(["message" => $e->getMessage()]);
+}

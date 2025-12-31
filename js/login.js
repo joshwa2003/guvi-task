@@ -9,6 +9,10 @@ function login() {
         success: function (res) {
             localStorage.setItem("token", res.token);
             window.location.href = "profile.html";
+        },
+        error: function (xhr, status, error) {
+            console.error(xhr);
+            alert("Login failed: " + (xhr.responseJSON ? xhr.responseJSON.message : "Server Error"));
         }
     });
 }
