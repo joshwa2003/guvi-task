@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install pdo_mysql mysqli mbstring zip
 
 # Install MongoDB extension
-RUN pecl install mongodb && docker-php-ext-enable mongodb
+RUN pecl install mongodb-1.19.1 && docker-php-ext-enable mongodb
 
 # Install Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
