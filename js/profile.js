@@ -184,6 +184,26 @@ function updateProfile() {
     });
 }
 
+function deleteAccount() {
+    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+        $.ajax({
+            url: "php/profile.php",
+            type: "DELETE",
+            headers: {
+                Authorization: localStorage.getItem("token")
+            },
+            success: function () {
+                alert("Account deleted successfully");
+                localStorage.removeItem("token");
+                window.location.replace("register.html");
+            },
+            error: function () {
+                alert("Failed to delete account");
+            }
+        });
+    }
+}
+
 function logout() {
     localStorage.removeItem("token");
     window.location.replace("login.html");
