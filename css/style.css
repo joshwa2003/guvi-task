@@ -1,3 +1,14 @@
 body {
   background-color: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 576px) {
+  body.container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
