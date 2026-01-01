@@ -14,10 +14,11 @@
 
     <div id="error-message" class="text-danger mb-2"></div>
 
-    <input id="name" class="form-control mb-2" placeholder="Name">
-    <input id="dob" type="date" class="form-control mb-2">
-    <input id="age" class="form-control mb-2" placeholder="Age" readonly>
-    <input id="contact" class="form-control mb-2" placeholder="Contact" maxlength="10">
+    <input id="name" class="form-control mb-2" placeholder="Name" autocomplete="off">
+    <input id="dob" type="text" class="form-control mb-2" placeholder="Date of Birth" onfocus="(this.type='date')"
+        onblur="(this.type='text')" autocomplete="off">
+    <input id="age" class="form-control mb-2" placeholder="Age" readonly autocomplete="off">
+    <input id="contact" class="form-control mb-2" placeholder="Contact" maxlength="10" autocomplete="off">
 
     <button class="btn btn-warning" onclick="updateProfile()">Update</button><br>
     <button class="btn btn-danger" onclick="logout()">Logout</button>
